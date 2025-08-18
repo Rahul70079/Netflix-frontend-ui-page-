@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Clone</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Navbar -->
+  <header class="header">
+    <div class="logo">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" alt="YouTube Logo">
+    </div>
+    <div class="search-bar">
+      <input type="text" placeholder="Search">
+      <button>🔍</button>
+      <button class="mic">🎤</button>
+    </div>
+    <div class="icons">
+      <span>⬆️</span>
+      <span>🔔</span>
+      <span>😊</span>
+    </div>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <a href="#">🏠 Home</a>
+    <a href="#">🔥 Trending</a>
+    <a href="#">📺 Subscriptions</a>
+    <hr>
+    <a href="#">🎥 Library</a>
+    <a href="#">🕒 History</a>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="videos">
+    <div class="video-card">
+      <img src="https://i.ytimg.com/vi/ScMzIvxBSi4/hqdefault.jpg" alt="Video">
+      <div class="info">
+        <img class="channel" src="https://via.placeholder.com/36" alt="channel">
+        <div>
+          <h3>Sample Video Title</h3>
+          <p>Channel Name</p>
+          <p>1M views • 1 week ago</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="video-card">
+      <img src="https://i.ytimg.com/vi/tgbNymZ7vqY/hqdefault.jpg" alt="Video">
+      <div class="info">
+        <img class="channel" src="https://via.placeholder.com/36" alt="channel">
+        <div>
+          <h3>Another Video Example</h3>
+          <p>Channel ABC</p>
+          <p>500K views • 3 days ago</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

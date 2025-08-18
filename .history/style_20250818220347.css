@@ -1,0 +1,105 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background: white;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.header .logo img {
+  height: 24px;
+}
+.search-bar {
+  display: flex;
+  flex: 1;
+  margin: 0 40px;
+}
+.search-bar input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-right: none;
+}
+.search-bar button {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+.search-bar .mic {
+  margin-left: 8px;
+  border-radius: 50%;
+}
+.icons span {
+  margin-left: 16px;
+  cursor: pointer;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  width: 200px;
+  height: 100%;
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding-top: 10px;
+}
+.sidebar a {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: black;
+}
+.sidebar a:hover {
+  background: #f2f2f2;
+}
+.sidebar hr {
+  margin: 8px 0;
+}
+
+/* Videos */
+.videos {
+  margin-left: 220px;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+.video-card img {
+  width: 100%;
+  border-radius: 8px;
+}
+.info {
+  display: flex;
+  margin-top: 8px;
+}
+.info .channel {
+  border-radius: 50%;
+  margin-right: 10px;
+}
+.info h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+.info p {
+  font-size: 12px;
+  color: #555;
+}
+

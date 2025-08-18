@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mazedar UI - Color Changer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #f0f0f0;
+      transition: background 0.5s;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0px 5px 15px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(45deg, #ff6b6b, #f7b42c);
+      color: white;
+      transition: transform 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    .color-code {
+      margin-top: 15px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎨 Mazedar UI</h1>
+    <p>Click the button to change background color!</p>
+    <button onclick="changeColor()">Change Color</button>
+    <div class="color-code" id="colorCode">#f0f0f0</div>
+  </div>
+
+  <script>
+    function changeColor() {
+      const randomColor = "#" + Math.floor(Math.random()*16777215).toString(16);
+      document.body.style.background = randomColor;
+      document.getElementById("colorCode").innerText = randomColor;
+    }
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Netflux – Netflix UI Clone (Frontend Only)</title>
+  <style>
+    /* -----------------------
+       Netflix UI Clone Styles
+       Pure HTML + CSS + JS
+       (No frameworks)
+       ----------------------- */
+    :root{
+      --bg:#141414;
+      --bg-elev:#181818;
+      --text:#e5e5e5;
+      --muted:#b3b3b3;
+      --accent:#e50914;
+      --chip:#2a2a2a;
+      --shadow:0 8px 24px rgba(0,0,0,.4);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, 'Helvetica Neue', Arial; 
+      overflow-x:hidden;
+    }
+
+    /* Header/Nav */
+    .header{
+      position:fixed; inset:0 0 auto 0; height:68px; z-index:50;
+      display:flex; align-items:center; gap:28px; padding:0 48px;
+      background:linear-gradient(to bottom, rgba(0,0,0,.8), rgba(0,0,0,0));
+      transition: background .25s ease;
+    }
+    .header.solid{ background: rgba(0,0,0,.85); }
+    .brand{
+      display:flex; align-items:center; gap:14px; font-weight:900; letter-spacing:.5px;
+      color:white; font-size:24px;
+    }
+    .brand .logo{ width:28px; height:28px; background:var(--accent); border-radius:4px; box-shadow:var(--shadow);}
+    .nav{ display:flex; gap:18px; flex-wrap:wrap; }
+    .nav a{ color:#e5e5e5; text-decoration:none; font-size:14px; opacity:.85 }
+    .nav a:hover{ opacity:1 }
+    .grow{ flex:1 }
+    .actions{ display:flex; align-items:center; gap:14px }
+    .icon-btn{ background:transparent; border:none; color:#fff; font-size:18px; cursor:pointer; }
+    .avatar{ width:32px; height:32px; border-radius:4px; background:#333; display:grid; place-items:center; font-weight:700 }
+
+    /* Hero */
+    .hero{
+      position:relative; height:78vh; min-height:520px; width:100%; overflow:hidden;
+      background:#000; display:grid; align-items:end; box-shadow: var(--shadow);
+    }
+    .hero img.bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:brightness(.55) saturate(1.1); }
+    .hero .vignette{ position:absolute; inset:0; background:linear-gradient(to top, rgba(20,20,20,1) 5%, rgba(20,20,20,.4) 35%, rgba(0,0,0,0) 60%)}
+    .hero .content{ position:relative; z-index:2; padding:0 48px 48px; max-width:850px; }
+    .hero h1{ font-size:clamp(28px, 6vw, 56px); margin:0 0 12px; }
+    .tags{ color:var(--muted); font-size:14px; margin-bottom:14px }
+    .hero .desc{ color:#dcdcdc; max-width:780px; line-height:1.5; margin:12px 0 18px; }
+    .btns{ display:flex; gap:12px; flex-wrap:wrap }
+    .btn{
+      display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+      background:#fff; color:#000; border:none; padding:10px 18px; border-radius:4px; font-weight:700;
+    }
+    .btn.secondary{ background:rgba(109,109,110,0.7); color:#fff }
+    .btn:hover{ filter:brightness(.92) }
+    .meta{ display:flex; gap:12px; align-items:center; margin-top:10px; color:var(--muted); font-size:14px }
+    .badge-age{ border:1px solid #666; padding:2px 6px; border-radius:4px; color:#bbb }
+
+    /* Rows */
+    .section{ position:relative; padding:18px 0 8px; }
+    .section h2{ font-size:18px; font-weight:700; margin:0 0 10px 48px; }
+    .row{ position:relative; }
+    .scroller{ display:grid; grid-auto-flow:column; grid-auto-columns:20%; gap:8px; overflow-x:auto; scroll-behavior:smooth; padding:0 48px 4px; }
+    .scroller::-webkit-scrollbar{ height:0 }
+
+    .card{
+      position:relative; border-radius:6px; overflow:hidden; background:#222; cursor:pointer; 
+      transform: translateZ(0);
+    }
+    .card img{ width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+    .card .overlay{ position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.7), rgba(0,0,0,0) 55%); opacity:0; transition:opacity .2s ease }
+    .card:hover .overlay{ opacity:1 }
+    .card .title{ position:absolute; left:8px; bottom:8px; right:8px; font-size:13px; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.6) }
+
+    /* Row arrows */
+    .arrow{ position:absolute; top:50%; transform:translateY(-50%); z-index:3; width:44px; height:88px; display:grid; place-items:center; border:none; cursor:pointer; 
+      background:linear-gradient(to right, rgba(20,20,20,.3), rgba(20,20,20,.9)); color:#fff; opacity:.0; transition:opacity .2s}
+    .row:hover .arrow{ opacity:1 }
+    .arrow.left{ left:0 }
+    .arrow.right{ right:0 }
+
+    /* Top 10 numbers */
+    .badge-num{ position:absolute; left:8px; top:8px; background:var(--accent); color:#fff; font-weight:900; font-size:12px; padding:2px 6px; border-radius:3px }
+
+    /* Footer */
+    .footer{ padding:40px 48px 60px; color:#808080; font-size:14px }
+    .social{ display:flex; gap:18px; margin-bottom:16px }
+    .links{ display:grid; grid-template-columns:repeat(4, minmax(120px, 1fr)); gap:10px 0; margin-bottom:18px }
+    .links a{ color:#808080; text-decoration:none }
+    .service{ border:1px solid #808080; width:max-content; padding:6px 10px; border-radius:2px; margin-bottom:16px }
+
+    /* Responsive */
+    @media (max-width: 1200px){ .scroller{ grid-auto-columns:25% } }
+    @media (max-width: 900px){ .scroller{ grid-auto-columns:33.33% } }
+    @media (max-width: 680px){ 
+      .header{ padding:0 18px }
+      .nav{ display:none }
+      .scroller{ grid-auto-columns:50%; padding:0 18px 4px }
+      .section h2{ margin-left:18px }
+      .hero .content{ padding:0 18px 28px }
+    }
+    @media (max-width: 420px){ .scroller{ grid-auto-columns:80% } }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>NETFLUX</div>
+    </div>
+    <nav class="nav">
+      <a href="#">Home</a>
+      <a href="#">Series</a>
+      <a href="#">Films</a>
+      <a href="#">New & Popular</a>
+      <a href="#">My List</a>
+      <a href="#">Browse by Languages</a>
+    </nav>
+    <div class="grow"></div>
+    <div class="actions">
+      <button class="icon-btn" title="Search" aria-label="Search">🔍</button>
+      <button class="icon-btn" title="Kids" aria-label="Kids">🧒</button>
+      <button class="icon-btn" title="Notifications" aria-label="Notifications">🔔</button>
+      <div class="avatar" title="You">R</div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero" id="hero">
+    <img class="bg" src="https://images.unsplash.com/photo-1517602302552-471fe67acf66?q=80&w=1974&auto=format&fit=crop" alt="Hero Background"/>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="content">
+      <h1>Edge of Midnight</h1>
+      <div class="tags">Thriller • Action • Explosive • 16+</div>
+      <p class="desc">When a covert op goes sideways, a lone agent must cross a city controlled by rival syndicates to save a witness that could topple them all.</p>
+      <div class="btns">
+        <button class="btn" id="playHero">▶ Play</button>
+        <button class="btn secondary" id="moreHero">ℹ More Info</button>
+      </div>
+      <div class="meta">
+        <span class="badge-age">16+</span>
+        <span>2h 05m</span>
+        <span>HD</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rows -->
+  <main>
+    <section class="section">
+      <h2>Trending Now</h2>
+      <div class="row">
+        <button class="arrow left" aria-label="Scroll left">◀</button>
+        <div class="scroller">
+          
+        </div>
+        <button class="arrow right" aria-label="Scroll right">▶</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Popular on Netflux</h2>
+      <div class="row">
+        <button class="arrow left" aria-label="Scroll left">◀</button>
+        <div class="scroller">
+          
+        </div>
+        <button class="arrow right" aria-label="Scroll right">▶</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Top 10 in India Today</h2>
+      <div class="row">
+        <button class="arrow left" aria-label="Scroll left">◀</button>
+        <div class="scroller top10">
+          
+        </div>
+        <button class="arrow right" aria-label="Scroll right">▶</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Continue Watching for Rahul</h2>
+      <div class="row">
+        <button class="arrow left" aria-label="Scroll left">◀</button>
+        <div class="scroller continue">
+          
+        </div>
+        <button class="arrow right" aria-label="Scroll right">▶</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="social">
+      <span>📘</span><span>🐦</span><span>📸</span><span>▶️</span>
+    </div>
+    <div class="links">
+      <a href="#">Audio Description</a>
+      <a href="#">Investor Relations</a>
+      <a href="#">Legal Notices</a>
+      <a href="#">Help Centre</a>
+      <a href="#">Jobs</a>
+      <a href="#">Cookie Preferences</a>
+      <a href="#">Gift Cards</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Corporate Information</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact Us</a>
+    </div>
+    <div class="service">Service Code</div>
+    <div>© 2025 Netflux — UI clone for learning (not affiliated with Netflix).</div>
+  </footer>
+
+  <!-- Modal Player -->
+  <div id="modal" style="position:fixed; inset:0; display:none; z-index:100;">
+    <div id="backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,.8);"></div>
+    <div style="position:absolute; inset:8% 10%; background:#000; border-radius:8px; overflow:hidden; box-shadow:var(--shadow); display:grid; grid-template-rows:min(62vh,62dvh) auto;">
+      <button id="closeModal" aria-label="Close" style="position:absolute; right:8px; top:8px; z-index:2; background:rgba(0,0,0,.5); color:#fff; border:none; font-size:20px; padding:6px 10px; cursor:pointer;">✖</button>
+      <iframe id="player" width="100%" height="100%" src="" title="Trailer" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div style="padding:12px 16px; color:#e5e5e5">Playing trailer…</div>
+    </div>
+  </div>
+
+  <script>
+    // ------- Sticky header on scroll
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('solid', window.scrollY > 10);
+    });
+
+    // ------- Data (placeholder posters)
+    const imageSets = {
+      action: [
+        'https://images.unsplash.com/photo-1526244434298-88fcbcb066b5?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1508341591423-4347099e1f19?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1526178612343-3e77c05a2b10?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1472457897821-70d3819a0e24?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1517602302552-471fe67acf66?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1518779578993-ec3579fee39f?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1542204165-65bf26472b9b?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1520975922284-9d76bd9715e0?q=80&w=1000&auto=format&fit=crop'
+      ],
+      drama: [
+        'https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1522199710521-72d69614c702?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1526948128573-703ee1aeb6fa?q=80&w=1000&auto=format&fit=crop'
+      ],
+      comedy: [
+        'https://images.unsplash.com/photo-1460022585522-59a89d5635dc?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1489710437720-ebb67ec84dd2?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1514517210521-58fcd2db1f87?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1503342217505-b0a15cf70489?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1520975672533-49f81b4f38d0?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=1000&auto=format&fit=crop'
+      ],
+      scifi: [
+        'https://images.unsplash.com/photo-1462332420958-a05d1e002413?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1496065187959-7f07b8353c55?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1504386106331-3e4e71712b38?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1520974722078-5f36c6fdc7b0?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1558981359-219d6364c9c8?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1520975918318-1d1a2c0fb89a?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?q=80&w=1000&auto=format&fit=crop'
+      ],
+      anime: [
+        'https://images.unsplash.com/photo-1512446816042-444d641267ee?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1591381700457-2f23d112b459?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1518773553398-650c184e0bb3?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1581091870622-2f72b88c45dd?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1495567720989-cebdbdd97913?q=80&w=1000&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1451186859696-371d9477be93?q=80&w=1000&auto=format&fit=crop'
+      ]
+    };
+
+    const titleSets = {
+      action: ['Edge of Steel','Blackout Raid','Run & Gun','Terminal Velocity','Night Pursuit','Urban Siege','Last Directive','Wildcard','Silent Strike','Fireline'],
+      drama: ['Fading Echoes','Seasons Apart','Echo of Rain','After the Storm','Hidden Letters','Paper Bridges','Broken Ties','Still Waters','Homesick','Long Way Home'],
+      comedy: ['Roommate Roulette','Pizza Panic','Awkward Office','Holiday Hangover','Lucky Breaks','Bad at Planning','Borrowed Trouble','Snack Attack','Oops!','LOL House'],
+      scifi: ['Quantum Drift','Neon Horizon','Void Runner','Parallel City','Signal Lost','Dark Matter','Orbitfall','Glitch Wave','Echo Nexus','Starforge'],
+      anime: ['Moon Blade','Sakura Skies','Mecha Pulse','Spirit Quest','Crimson Petals','Pixel Idol','Kitsune Trail','Cyber Maid','Dragon Byte','Paper Katana']
+    };
+
+    const rows = document.querySelectorAll('.row');
+
+    function createCard(src, title, index){
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <img loading="lazy" src="${src}" alt="${title}">
+        <div class="overlay"></div>
+        <div class="title">${title}</div>
+      `;
+      if(index < 10 && card.closest('.top10')){
+        const badge = document.createElement('div');
+        badge.className = 'badge-num';
+        badge.textContent = index + 1;
+        card.appendChild(badge);
+      }
+      // open modal on click
+      card.addEventListener('click', ()=> openTrailer(title));
+      return card;
+    }
+
+    const sections = document.querySelectorAll('main .section');
+
+    function pickKeyFromLabel(label){
+      const l = (label||'').toLowerCase();
+      if(l.includes('trending')) return 'action';
+      if(l.includes('popular')) return 'drama';
+      if(l.includes('top 10')) return 'scifi';
+      if(l.includes('continue')) return 'comedy';
+      return 'action';
+    }
+    sections.forEach((section) => {
+      const label = section.querySelector('h2')?.textContent || '';
+      const key = pickKeyFromLabel(label);
+      const imgs = [...imageSets[key]]; 
+      const titles = titleSets[key];
+      const scroller = section.querySelector('.scroller');
+      scroller.innerHTML = '';
+    
+      imgs.sort(() => Math.random() - 0.5);
+      imgs.forEach((src, i) => scroller.appendChild(createCard(src, titles[i % titles.length], i)));
+
+      const prev = section.querySelector('.arrow.left');
+      const next = section.querySelector('.arrow.right');
+      const step = () => Math.min(scroller.clientWidth * 0.9, 900);
+      prev.addEventListener('click', ()=> scroller.scrollBy({left: -step(), behavior:'smooth'}));
+      next.addEventListener('click', ()=> scroller.scrollBy({left: step(), behavior:'smooth'}));
+    });
+    const cont = document.querySelector('.continue');
+    if(cont){
+      cont.innerHTML = '';
+      const imgs = [...imageSets.comedy];
+      imgs.sort(()=> Math.random()-0.5);
+      imgs.slice(0,8).forEach((src, i)=>{
+        const card = createCard(src, 'Episode ' + (i+1), i);
+        const barWrap = document.createElement('div');
+        barWrap.style.position = 'absolute';
+        barWrap.style.left = '0';
+        barWrap.style.right = '0';
+        barWrap.style.bottom = '0';
+        barWrap.style.height = '6px';
+        barWrap.style.background = 'rgba(255,255,255,.15)';
+        const bar = document.createElement('div');
+        bar.style.height = '100%';
+        bar.style.width = (10 + i*10) + '%';
+        bar.style.background = 'var(--accent)';
+        barWrap.appendChild(bar);
+        card.appendChild(barWrap);
+        cont.appendChild(card);
+      })
+    }
+
+    const modal = document.getElementById('modal');
+    const player = document.getElementById('player');
+    const closeModal = document.getElementById('closeModal');
+    const backdrop = document.getElementById('backdrop');
+
+    function openTrailer(title){
+      const url = 'https://www.youtube.com/embed/ysz5S6PUM-U?autoplay=1&rel=0';
+      player.src = url;
+      modal.style.display = 'block';
+    }
+    function hideModal(){ player.src = ''; modal.style.display = 'none'; }
+    closeModal.addEventListener('click', hideModal);
+    backdrop.addEventListener('click', hideModal);
+    document.getElementById('playHero').addEventListener('click', ()=> openTrailer('Edge of Midnight'));
+    document.getElementById('moreHero').addEventListener('click', ()=> window.scrollTo({top: document.querySelector('main').offsetTop - 60, behavior:'smooth'}));
+  </script>
+</body>
+</html>

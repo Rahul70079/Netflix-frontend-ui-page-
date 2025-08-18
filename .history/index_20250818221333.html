@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Netflux – Netflix UI Clone (Frontend Only)</title>
+  <style>
+    /* -----------------------
+       Netflix UI Clone Styles
+       Pure HTML + CSS + JS
+       (No frameworks)
+       ----------------------- */
+    :root{
+      --bg:#141414;
+      --bg-elev:#181818;
+      --text:#e5e5e5;
+      --muted:#b3b3b3;
+      --accent:#e50914;
+      --chip:#2a2a2a;
+      --shadow:0 8px 24px rgba(0,0,0,.4);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background:var(--bg); color:var(--text);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, 'Helvetica Neue', Arial; 
+      overflow-x:hidden;
+    }
+
+    /* Header/Nav */
+    .header{
+      position:fixed; inset:0 0 auto 0; height:68px; z-index:50;
+      display:flex; align-items:center; gap:28px; padding:0 48px;
+      background:linear-gradient(to bottom, rgba(0,0,0,.8), rgba(0,0,0,0));
+      transition: background .25s ease;
+    }
+    .header.solid{ background: rgba(0,0,0,.85); }
+    .brand{
+      display:flex; align-items:center; gap:14px; font-weight:900; letter-spacing:.5px;
+      color:white; font-size:24px;
+    }
+    .brand .logo{ width:28px; height:28px; background:var(--accent); border-radius:4px; box-shadow:var(--shadow);}
+    .nav{ display:flex; gap:18px; flex-wrap:wrap; }
+    .nav a{ color:#e5e5e5; text-decoration:none; font-size:14px; opacity:.85 }
+    .nav a:hover{ opacity:1 }
+    .grow{ flex:1 }
+    .actions{ display:flex; align-items:center; gap:14px }
+    .icon-btn{ background:transparent; border:none; color:#fff; font-size:18px; cursor:pointer; }
+    .avatar{ width:32px; height:32px; border-radius:4px; background:#333; display:grid; place-items:center; font-weight:700 }
+
+    /* Hero */
+    .hero{
+      position:relative; height:78vh; min-height:520px; width:100%; overflow:hidden;
+      background:#000; display:grid; align-items:end; box-shadow: var(--shadow);
+    }
+    .hero img.bg{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:brightness(.55) saturate(1.1); }
+    .hero .vignette{ position:absolute; inset:0; background:linear-gradient(to top, rgba(20,20,20,1) 5%, rgba(20,20,20,.4) 35%, rgba(0,0,0,0) 60%)}
+    .hero .content{ position:relative; z-index:2; padding:0 48px 48px; max-width:850px; }
+    .hero h1{ font-size:clamp(28px, 6vw, 56px); margin:0 0 12px; }
+    .tags{ color:var(--muted); font-size:14px; margin-bottom:14px }
+    .hero .desc{ color:#dcdcdc; max-width:780px; line-height:1.5; margin:12px 0 18px; }
+    .btns{ display:flex; gap:12px; flex-wrap:wrap }
+    .btn{
+      display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+      background:#fff; color:#000; border:none; padding:10px 18px; border-radius:4px; font-weight:700;
+    }
+    .btn.secondary{ background:rgba(109,109,110,0.7); color:#fff }
+    .btn:hover{ filter:brightness(.92) }
+    .meta{ display:flex; gap:12px; align-items:center; margin-top:10px; color:var(--muted); font-size:14px }
+    .badge-age{ border:1px solid #666; padding:2px 6px; border-radius:4px; color:#bbb }
+
+    /* Rows */
+    .section{ position:relative; padding:18px 0 8px; }
+    .section h2{ font-size:18px; font-weight:700; margin:0 0 10px 48px; }
+    .row{ position:relative; }
+    .scroller{ display:grid; grid-auto-flow:column; grid-auto-columns:20%; gap:8px; overflow-x:auto; scroll-behavior:smooth; padding:0 48px 4px; }
+    .scroller::-webkit-scrollbar{ height:0 }
+
+    .card{
+      position:relative; border-radius:6px; overflow:hidden; background:#222; cursor:pointer; 
+      transform: translateZ(0);
+    }
+    .card img{ width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+    .card .overlay{ position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,.7), rgba(0,0,0,0) 55%); opacity:0; transition:opacity .2s ease }
+    .card:hover .overlay{ opacity:1 }
+    .card .title{ position:absolute; left:8px; bottom:8px; right:8px; font-size:13px; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.6) }
+
+    /* Row arrows */
+    .arrow{ position:absolute; top:50%; transform:translateY(-50%); z-index:3; width:44px; height:88px; display:grid; place-items:center; border:none; cursor:pointer; 
+      background:linear-gradient(to right, rgba(20,20,20,.3), rgba(20,20,20,.9)); color:#fff; opacity:.0; transition:opacity .2s}
+    .row:hover .arrow{ opacity:1 }
+    .arrow.left{ left:0 }
+    .arrow.right{ right:0 }
+
+    /* Top 10 numbers */
+    .badge-num{ position:absolute; left:8px; top:8px; background:var(--accent); color:#fff; font-weight:900; font-size:12px; padding:2px 6px; border-radius:3px }
+
+    /* Footer */
+    .footer{ padding:40px 48px 60px; color:#808080; font-size:14px }
+    .social{ display:flex; gap:18px; margin-bottom:16px }
+    .links{ display:grid; grid-template-columns:repeat(4, minmax(120px, 1fr)); gap:10px 0; margin-bottom:18px }
+    .links a{ color:#808080; text-decoration:none }
+    .service{ border:1px solid #808080; width:max-content; padding:6px 10px; border-radius:2px; margin-bottom:16px }
+
+    /* Responsive */
+    @media (max-width: 1200px){ .scroller{ grid-auto-columns:25% } }
+    @media (max-width: 900px){ .scroller{ grid-auto-columns:33.33% } }
+    @media (max-width: 680px){ 
+      .header{ padding:0 18px }
+      .nav{ display:none }
+      .scroller{ grid-auto-columns:50%; padding:0 18px 4px }
+      .section h2{ margin-left:18px }
+      .hero .content{ padding:0 18px 28px }
+    }
+    @media (max-width: 420px){ .scroller{ grid-auto-columns:80% } }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header" id="header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div>NETFLUX</div>
+    </div>
+    <nav class="nav">
+      <a href="#">Home</a>
+      <a href="#">Series</a>
+      <a href="#">Films</a>
+      <a href="#">New & Popular</a>
+      <a href="#">My List</a>
+      <a href="#">Browse by Languages</a>
+    </nav>
+    <div class="grow"></div>
+    <div class="actions">
+      <button class="icon-btn" title="Search" aria-label="Search">🔍</button>
+      <button class="icon-btn" title="Kids" aria-label="Kids">🧒</button>
+      <button class="icon-btn" title="Notifications" aria-label="Notifications">🔔</button>
+      <div class="avatar" title="You">R</div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero" id="hero">
+    <img class="bg" src="https://images.unsplash.com/photo-1517602302552-471fe67acf66?q=80&w=1974&auto=format&fit=crop" alt="Hero Background"/>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="content">
+      <h1>Edge of Midnight</h1>
+      <div class="tags">Thriller • Action • Explosive • 16+</div>
+      <p class="desc">When a covert op goes sideways, a lone agent must cross a city controlled by rival syndicates to save a witness that could topple them all.</p>
+      <div class="btns">
+        <button class="btn" id="playHero">▶ Play</button>
+        <button class="btn secondary" id="moreHero">ℹ More Info</button>
+      </div>
+      <div class="meta">
+        <span class="badge-age">16+</span>
+        <span>2h 05m</span>
+        <span>HD</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Rows -->
+  <main>
+    <section class="section">
+      <h2>Trending Now</h2>
+      <div class="row">
+        <button class="arrow left" aria-label="Scroll left">◀</button>
+        <div class="scroller">
+          
+        </div>
+        <button class="arrow right" aria-label="Scroll right">▶</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Popular on Netflux</h2>
+      <div class="row">
+        <button class="arrow left" aria-label="Scroll left">◀</button>
+        <div class="scroller">
+          
+        </div>
+        <button class="arrow right" aria-label="Scroll right">▶</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Top 10 in India Today</h2>
+      <div class="row">
+        <button class="arrow left" aria-label="Scroll left">◀</button>
+        <div class="scroller top10">
+          
+        </div>
+        <button class="arrow right" aria-label="Scroll right">▶</button>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>Continue Watching for Rahul</h2>
+      <div class="row">
+        <button class="arrow left" aria-label="Scroll left">◀</button>
+        <div class="scroller continue">
+          
+        </div>
+        <button class="arrow right" aria-label="Scroll right">▶</button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="social">
+      <span>📘</span><span>🐦</span><span>📸</span><span>▶️</span>
+    </div>
+    <div class="links">
+      <a href="#">Audio Description</a>
+      <a href="#">Investor Relations</a>
+      <a href="#">Legal Notices</a>
+      <a href="#">Help Centre</a>
+      <a href="#">Jobs</a>
+      <a href="#">Cookie Preferences</a>
+      <a href="#">Gift Cards</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Corporate Information</a>
+      <a href="#">Privacy</a>
+      <a href="#">Contact Us</a>
+    </div>
+    <div class="service">Service Code</div>
+    <div>© 2025 Netflux — UI clone for learning (not affiliated with Netflix).</div>
+  </footer>
+
+  <!-- Modal Player -->
+  <div id="modal" style="position:fixed; inset:0; display:none; z-index:100;">
+    <div id="backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,.8);"></div>
+    <div style="position:absolute; inset:8% 10%; background:#000; border-radius:8px; overflow:hidden; box-shadow:var(--shadow); display:grid; grid-template-rows:min(62vh,62dvh) auto;">
+      <button id="closeModal" aria-label="Close" style="position:absolute; right:8px; top:8px; z-index:2; background:rgba(0,0,0,.5); color:#fff; border:none; font-size:20px; padding:6px 10px; cursor:pointer;">✖</button>
+      <iframe id="player" width="100%" height="100%" src="" title="Trailer" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+      <div style="padding:12px 16px; color:#e5e5e5">Playing trailer…</div>
+    </div>
+  </div>
+
+  <script>
+    // ------- Sticky header on scroll
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('solid', window.scrollY > 10);
+    });
+
+    // ------- Data (placeholder posters)
+    const posters = [
+      'https://image.tmdb.org/t/p/w500/8YFL5QQVPy3AgrEQxNYVSgiPEbe.jpg',
+      'https://image.tmdb.org/t/p/w500/2CAL2433ZeIihfX1Hb2139CX0pW.jpg',
+      'https://image.tmdb.org/t/p/w500/9Gtg2DzBhmYamXBS1hKAhiwbBKS.jpg',
+      'https://image.tmdb.org/t/p/w500/xfNHRI2f5kHGvogxLd0C5sB90L7.jpg',
+      'https://image.tmdb.org/t/p/w500/3imvGxZ2wE8xmPKzW0fvkYl9wQK.jpg',
+      'https://image.tmdb.org/t/p/w500/rjkmN1dniUHVYAtwuV3Tji7FsDO.jpg',
+      'https://image.tmdb.org/t/p/w500/sqLowacltbZLoCa4KYye64RvvdQ.jpg',
+      'https://image.tmdb.org/t/p/w500/rTh4K5uw9HypmpGslcKd4QfHl93.jpg',
+      'https://image.tmdb.org/t/p/w500/6KErczPBROQty7QoIsaa6wJYXZi.jpg',
+      'https://image.tmdb.org/t/p/w500/q719jXXEzOoYaps6babgKnONONX.jpg',
+      
+    ];
+
+    const titles = [
+      'Project Nemesis','Desert Run','Shattered Code','Neon Ghosts','Crimson Tide',
+      'Midnight Rush','Silent Echoes','Rogue Planet','Afterlight','Quantum City'
+    ];
+
+    const rows = document.querySelectorAll('.row');
+
+    function createCard(src, title, index){
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <img loading="lazy" src="${src}" alt="${title}">
+        <div class="overlay"></div>
+        <div class="title">${title}</div>
+      `;
+      if(index < 10 && card.closest('.top10')){
+        const badge = document.createElement('div');
+        badge.className = 'badge-num';
+        badge.textContent = index + 1;
+        card.appendChild(badge);
+      }
+      // open modal on click
+      card.addEventListener('click', ()=> openTrailer(title));
+      return card;
+    }
+
+    rows.forEach((row, rIndex) => {
+      const scroller = row.querySelector('.scroller');
+      for(let i=0;i<posters.length;i++){
+        scroller.appendChild(createCard(posters[i % posters.length], titles[i % titles.length], i));
+      }
+      // arrows
+      const prev = row.querySelector('.arrow.left');
+      const next = row.querySelector('.arrow.right');
+      const step = () => Math.min(scroller.clientWidth * 0.9, 900);
+      prev.addEventListener('click', ()=> scroller.scrollBy({left: -step(), behavior:'smooth'}));
+      next.addEventListener('click', ()=> scroller.scrollBy({left: step(), behavior:'smooth'}));
+    });
+
+    // Continue Watching row with progress
+    const cont = document.querySelector('.continue');
+    if(cont){
+      cont.innerHTML = '';
+      posters.slice(0,8).forEach((src, i)=>{
+        const card = createCard(src, 'Episode ' + (i+1), i);
+        const barWrap = document.createElement('div');
+        barWrap.style.position = 'absolute';
+        barWrap.style.left = '0';
+        barWrap.style.right = '0';
+        barWrap.style.bottom = '0';
+        barWrap.style.height = '6px';
+        barWrap.style.background = 'rgba(255,255,255,.15)';
+        const bar = document.createElement('div');
+        bar.style.height = '100%';
+        bar.style.width = (10 + i*10) + '%';
+        bar.style.background = 'var(--accent)';
+        barWrap.appendChild(bar);
+        card.appendChild(barWrap);
+        cont.appendChild(card);
+      })
+    }
+
+    // Modal Player
+    const modal = document.getElementById('modal');
+    const player = document.getElementById('player');
+    const closeModal = document.getElementById('closeModal');
+    const backdrop = document.getElementById('backdrop');
+
+    function openTrailer(title){
+      // Using a generic trailer (copyright-friendly placeholder)
+      const url = 'https://www.youtube.com/embed/ysz5S6PUM-U?autoplay=1&rel=0';
+      player.src = url;
+      modal.style.display = 'block';
+    }
+    function hideModal(){ player.src = ''; modal.style.display = 'none'; }
+    closeModal.addEventListener('click', hideModal);
+    backdrop.addEventListener('click', hideModal);
+
+    // Hero play button
+    document.getElementById('playHero').addEventListener('click', ()=> openTrailer('Edge of Midnight'));
+    document.getElementById('moreHero').addEventListener('click', ()=> window.scrollTo({top: document.querySelector('main').offsetTop - 60, behavior:'smooth'}));
+  </script>
+</body>
+</html>
