@@ -1,3 +1,4 @@
+
 🎬 Netflix UI Clone
 
 A responsive Netflix Clone built using HTML, CSS, and JavaScript.
