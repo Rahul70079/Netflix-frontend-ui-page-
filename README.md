@@ -1,6 +1,5 @@
 
 🎬 Netflix UI Clone
-
 A responsive Netflix Clone built using HTML, CSS, and JavaScript.
 This project replicates the original Netflix homepage UI with multiple sections like Trending, Popular, Top 10, and Continue Watching.
 
